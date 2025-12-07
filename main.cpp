@@ -117,9 +117,73 @@ void printPath(pair<int,int> exitcell,
 // STUDENTS IMPLEMENT DFS HERE
 // Add arguments, return type, and logic
 // ----------------------------------------------------------
-// bool dfs(……) {
-//     // Your code here
-// }
+bool dfs(int r, int c, const vector<vector<int>>& maze, vector<vector<bool>>& visited, vector<vector<int>>& parent_r, vector<vector<int>>& parent_c, int exit_r, int exit_c) {
+    // Your code here
+
+
+    //if current cell is not marked as visited, mark it with a 1 for true
+    if (visited[r][c] != 1) { visited[r][c] = 1; }
+    //if current cell is the exit, we're done
+    if (r == exit_r && c == exit_c) { return true; }
+
+    //check if cell above is open, unvisited, and within bounds: go there
+    int nr = r + dr[0]; // r - 1: goes up 1
+    int nc = c;
+    if (nr >= 0 && nr < maze.size() && maze[nr][nc] == 0 && visited[nr][nc] != 1) {
+        parent_r[nr][nc] = r;
+        parent_c[nr][nc] = c;
+
+        //If the algo finds the exit (a path), the current recursive call will return true, and so this if statement
+        //will make sure that all previous recursive calls will return true, going up all the way through the chain of
+        //recursive calls until the very first recursive call ultimately returns true
+        //Note: This will have to be applied to the other recursive calls in which we were able to move to a new cell
+        if (dfs(nr, nc, maze, visited, parent_r, parent_c, exit_r, exit_c) == true) {
+            return true;
+        }
+    }
+
+    //check if cell below is open, unvisited, and within bounds: go there
+    nr = r + dr[2]; // r + 1: goes down 1
+    nc = c;
+    if (nr >= 0 && nr < maze.size() && maze[nr][nc] == 0 && visited[nr][nc] != 1) {
+        parent_r[nr][nc] = r;
+        parent_c[nr][nc] = c;
+
+        if (dfs(nr, nc, maze, visited, parent_r, parent_c, exit_r, exit_c) == true) {
+            return true;
+        }
+    }
+
+    //check if cell to the right is open, unvisited, and within bounds: go there
+    nr = r;
+    nc = c + dc[1]; // c + 1: goes right 1
+    if (nc >= 0 && nc < maze[nr].size() && maze[nr][nc] == 0 && visited[nr][nc] != 1) {
+        parent_r[nr][nc] = r;
+        parent_c[nr][nc] = c;
+
+        if (dfs(nr, nc, maze, visited, parent_r, parent_c, exit_r, exit_c) == true) {
+            return true;
+        }
+    }
+
+    //check if cell to the left is open, unvisited, and within bounds: go there
+    nr = r;
+    nc = c + dc[3]; // c - 1: goes left 1
+    if (nc >= 0 && nc < maze[nr].size() && maze[nr][nc] == 0 && visited[nr][nc] != 1) {
+        parent_r[nr][nc] = r;
+        parent_c[nr][nc] = c;
+
+        if (dfs(nr, nc, maze, visited, parent_r, parent_c, exit_r, exit_c) == true) {
+            return true;
+        }
+    }
+
+    //no more recursive calls means no venturing, so we backtrack.
+    //however, this will ultimately return false for the last time when all previous recursive calls
+    //can find no more paths; ie, everytime we backtrack we always return false until we reach the very first
+    //recursive call in which we return false
+    return false;
+}
 
 
 // ----------------------------------------------------------
